@@ -76,14 +76,14 @@ function Signup() {
             >
               {formik => (
                 <div>
-                  <h1 className="my-4 font-weight-bold .display-4">Sign Up</h1>
+                  <h1 className="my-4 font-weight-bold .display-4" style={{color: "#083144"}}>Sign Up</h1>
                   <Form>
                     <TextField label="First Name" name="firstName" type="text" />
                     <TextField label="Last Name" name="lastName" type="text" />
                     <TextField label="Email" name="email" type="email" />
                     <TextField label="Phone" name="phone" type="text" />
                     <TextField label="Password" name="password" type="password" />
-                    <button className="btn btn-dark mt-3" type="submit">Register</button>
+                    <button className="btn text-white" style={{backgroundColor: "#083144"}} type="submit">Register</button>
                   </Form>
                   <p className="mt-2">Already have an account? <Link to="/login">Login</Link> </p>
                   {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}

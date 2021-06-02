@@ -16,7 +16,6 @@ function Login() {
     const [msgClass, setMsgClass] = useState()
     const useData = useSelector((state) => state.addUser)
     console.log(useData)
-    let history = useHistory()
     const dispatch = useDispatch()
     const validate = Yup.object({
         email: Yup.string()
@@ -58,7 +57,8 @@ function Login() {
                                         console.log(res.data.user)
                                         dispatch(user({
                                             loginStatus: true,
-                                            loginUser: res.data.user
+                                            loginUser: res.data.user,
+                                            role: res.data.user.role
                                         }))
                                         // history.push('/dasboard')
                                     } else {
@@ -72,11 +72,11 @@ function Login() {
                         >
                             {formik => (
                                 <div>
-                                    <h1 className="my-4 font-weight-bold .display-4">Login</h1>
+                                    <h1 className="my-4 font-weight-bold .display-4" style={{color: "#083144"}}>Login</h1>
                                     <Form>
                                         <TextField label="Email" name="email" type="email" />
                                         <TextField label="Password" name="password" type="password" />
-                                        <button className="btn btn-dark mt-3" type="submit">Login</button>
+                                        <button className="btn text-white" style={{backgroundColor: "#083144"}} type="submit">Login</button>
                                     </Form>
                                     <p className="mt-2">Already have an account? <Link to="/">Signup</Link> </p>
                                     {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}

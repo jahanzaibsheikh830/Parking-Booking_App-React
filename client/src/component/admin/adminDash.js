@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import axios from 'axios'
 import url from '../../baseUrl/baseURL'
-function Dashboard() {
+function AdminDashboard() {
     const useData = useSelector((state)=> state.addUser)
     const [data,setData] = useState([])
 
@@ -35,12 +35,10 @@ function Dashboard() {
                                     <div className="card" key={i}>
                                         <img src={value.imgUrl} className="card-img-top" alt="..." />
                                         <div className="card-body">
-                                            <h5 className="card-title text-capitalize" style={{ color: "#083144" }}>{value.location}</h5>
+                                            <h5 className="card-title text-capitalize"
+                                            style={{ color: "#083144" }}>{value.location}</h5>
                                             <p className="card-text">{value.desc}</p>
-                                            <Link to={{
-                                                pathname: "/booking",
-                                                state: value
-                                            }} className="btn text-white" style={{backgroundColor: "#083144"}}>Booking</Link>
+                                            <p>Slots {value.slots}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -53,4 +51,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard
+export default AdminDashboard

@@ -1,6 +1,7 @@
 let initialState = {
     loginUser: null,
-    loginStatus: false
+    loginStatus: false,
+    role: null
 }
 console.log(initialState)
 const addUser = (state = initialState, action) =>{

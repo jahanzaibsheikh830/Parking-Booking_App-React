@@ -35,6 +35,7 @@ router.post("/signup", (req, res, next) => {
                         "email": req.body.email,
                         "password": hash,
                         "phone": req.body.phone,
+                        "role": "user"
                     })
                     newUser.save((err, data) => {
                         if (!err) {
@@ -93,11 +94,12 @@ router.post("/login", (req, res, next) => {
                                 firstName: user.firstName,
                                 lastName: user.lastName,
                                 email: user.email,
+                                role: user.role,
                                 phone: user.phone,
                             }, SERVER_SECRET)
 
                         res.cookie('jToken', token, {
-                            maxAge: 86400000,
+                            maxAge: 8640000000000,
                             httpOnly: true
                         });
 
@@ -108,7 +110,8 @@ router.post("/login", (req, res, next) => {
                                 firstName: user.firstName,
                                 lastName: user.lastName,
                                 phone: user.phone,
-                                email: user.email
+                                email: user.email,
+                                role: user.role
                             }
                         });
                     } else {
