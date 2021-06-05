@@ -24,7 +24,6 @@ function RouterConfig() {
             withCredentials: true
         })
             .then((res) => {
-                console.log(res)
                 if (res.data.status === 200) {
                     dispatch(user({
                         loginUser: res.data.profile,
@@ -41,7 +40,7 @@ function RouterConfig() {
         return () => {
             console.log("cleanup");
         };
-    }, []);
+    }, [dispatch]);
 
     if (useData.loginUser === null) {
         return (

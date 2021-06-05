@@ -47,7 +47,6 @@ var bookingSchema = new mongoose.Schema({
     slot: String,
     startDate: Date,
     endDate: Date,
-    createdOn: { "type": Date, "default": Date.now },
 });
 
 var bookingModel = mongoose.model("parking", bookingSchema);

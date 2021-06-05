@@ -58,8 +58,6 @@ app.use(function (req, res, next) {
 
 app.get("/profile", (req, res, next) => {
 
-    console.log(req.body)
-
     UserModel.findById(req.body.jToken.id, 'firstName lastName email phone role createdOn',
         function (err, doc) {
             console.log("doc", doc)
@@ -102,6 +100,7 @@ app.post('/booking', async (req, res) => {
             res.send("no user found fot the given ID")
         }
         const { startDate, endDate, slot } = req.body
+        console.log(slot)
 
         let start = new Date(startDate)
         let end = new Date(endDate)
@@ -115,13 +114,16 @@ app.post('/booking', async (req, res) => {
         start = start.getTime()
         end = end.getTime()
 
-        const startData = await bookingModel.find({ startDate: { $gte: new Date(start) }, slot, location: req.body.location })
-        const endData = await bookingModel.find({ endDate: { $lte: new Date(end) }, slot, location: req.body.location })
+        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $lte: new Date(end) }, slot, location: req.body.location })
+        const endData = await bookingModel.find({ endDate: { $lte: new Date(end), $gte: new Date(start) }, slot, location: req.body.location })
 
         console.log("Start Data", startData)
         console.log("End Data", endData)
 
-        if (startData.length === 0 || endData.length === 0) {
+        if (startData.length !== 0 || endData.length !== 0) {
+            res.send({ status: 403, message: "Sorry! Slot is not available at this time" })
+        }
+        else {
             let newBooking = new bookingModel({
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -134,9 +136,6 @@ app.post('/booking', async (req, res) => {
             })
             const successData = await newBooking.save()
             res.send({ status: 200, successData: successData, message: "Slot has booked Successfully" });
-        }
-        else {
-            res.send({ status: 403, message: "Sorry! Slot is not available at this time" })
         }
 
     } catch (error) {
@@ -152,7 +151,7 @@ app.get('/getBookings', async (req, res) => {
             res.send("no user found fot the given ID")
         }
 
-        const bookingData = await bookingModel.find({})
+        const bookingData = await bookingModel.find({email: req.body.jToken.email})
 
         if (bookingData) {
             res.status(200).send({
@@ -195,7 +194,8 @@ app.post('/validateSlot', async (req, res) => {
         let start = new Date(startDate)
         let end = new Date(endDate)
 
-        console.log(startDate, endDate)
+        console.log("startDate", start)
+        console.log("endDate", end)
         start.setMilliseconds(0)
         start.setSeconds(0)
         end.setMilliseconds(0)
@@ -203,17 +203,22 @@ app.post('/validateSlot', async (req, res) => {
 
         start = start.getTime()
         end = end.getTime()
-        console.log(start, end)
 
-        const startData = await bookingModel.find({ startDate: { $gte: new Date(start) }, location: req.body.location })
-        const endData = await bookingModel.find({ endDate: { $lte: new Date(end) }, location: req.body.location })
+        console.log("startDate", start)
+        console.log("endDate", end)
 
+        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, location: req.body.location })
+        const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, location: req.body.location })
+
+        console.log("startDate ====", startData)
+        console.log("endDate ======", endData)
         if (startData.length !== 0 || endData.length !== 0) {
-            console.log("startDate ====", startData)
-            console.log("endDate ======", endData)
-            res.status(200).send({
-                startData,
-                endData
+            res.send({
+                status: 200,
+                data: {
+                    startData,
+                    endData
+                }
             })
         } else {
             res.send("not found")
@@ -226,6 +231,7 @@ app.post('/validateSlot', async (req, res) => {
 })
 
 app.post('/addAreaDetails', async (req, res) => {
+
     try {
         console.log("adhajhdk", req.body)
         if (!req.body.location || !req.body.desc || !req.body.slots || !req.body.imgURl) {
@@ -291,7 +297,7 @@ app.get('/getLocations', async (req, res) => {
         res.status(400).send(error.message)
     }
 })
-app.get('/logout',  (req, res) => {
+app.get('/logout', (req, res) => {
     res.clearCookie('jToken')
     res.send("clear")
 })

@@ -7,7 +7,6 @@ import URL from '../../baseUrl/baseURL'
 function Logout() {
     const dispatch = useDispatch()
     const useData = useSelector(state => state.addUser)
-    console.log("useData.loginUser.firstName" ,useData.loginUser.firstName)
     const history = useHistory()
     function logout() {
         axios({
@@ -27,7 +26,7 @@ function Logout() {
     return (
         <div className='justify-content-right'>
             <span className="text-white mr-3" style={{textTransform: "capitalize"}}>{useData.loginUser.firstName}</span>
-            <a className="btn btn-light " onClick={logout}>logout</a>
+            <button className="btn btn-light " onClick={logout}>logout</button>
         </div>
     )
 }

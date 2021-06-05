@@ -16,17 +16,17 @@ function ViewBooking() {
             console.log(err)
         })
     }, [])
-    if (data.length === 0) {
-        return (
-            <div className='container'>
-            <div className="d-flex align-items-center justify-content-center " style={{width: "100%", height: "100vh"}}>
-                <div className="spinner-border " role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-            </div>
-        </div>
-        )
-    }
+    // if (data.length === 0) {
+    //     return (
+    //         <div className='container'>
+    //         <div className="d-flex align-items-center justify-content-center " style={{width: "100%", height: "100vh"}}>
+    //             <div className="spinner-border " role="status">
+    //                 <span className="sr-only">Loading...</span>
+    //             </div>
+    //         </div>
+    //     </div>
+    //     )
+    // }
     return (
         <div >
             <div className='container'>
@@ -45,10 +45,11 @@ function ViewBooking() {
                             </tr>
                         </thead>
                         {
+                        data.length === 0? <p>No booking you have made</p>: 
                             data && data.map((value, index) => {
                                 return (
-                                    <tbody>
-                                        <tr>
+                                    <tbody key={index}>
+                                        <tr >
                                             <th scope="row">{index + 1}</th>
                                             <td className='text-capitalize'>{value.firstName + " " + value.lastName}</td>
                                             <td>Slot {value.slot}</td>

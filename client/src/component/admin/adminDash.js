@@ -1,11 +1,7 @@
 import React ,{useEffect, useState} from 'react'
-// import data from './areaData'
-import {Link} from 'react-router-dom'
-import {useSelector} from 'react-redux'
 import axios from 'axios'
 import url from '../../baseUrl/baseURL'
 function AdminDashboard() {
-    const useData = useSelector((state)=> state.addUser)
     const [data,setData] = useState([])
 
     useEffect(()=>{
@@ -23,7 +19,6 @@ function AdminDashboard() {
             console.log(err)
         })
     },[])
-    console.log(data)
     return (
         <div>
             <div className='container'>
@@ -31,8 +26,8 @@ function AdminDashboard() {
                     {
                         data.map((value, i) => {
                             return (
-                                <div className='col-md-4' >
-                                    <div className="card" key={i}>
+                                <div className='col-md-4'key={i} >
+                                    <div className="card" >
                                         <img src={value.imgUrl} className="card-img-top" alt="..." />
                                         <div className="card-body">
                                             <h5 className="card-title text-capitalize"

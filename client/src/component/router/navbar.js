@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import Logout from './logout'
 function Navbar() {
     const useData = useSelector(state => state.addUser)
-    console.log("hihilhlk", useData)
     return (
         <div style={{ backgroundColor: "#083144" }}>
             <div className='container'>
@@ -17,11 +16,9 @@ function Navbar() {
                         {useData.role === "user" ? <div className="navbar-nav">
                             <Link to="/" className="nav-item nav-link active text-white" >Areas</Link>
                             <Link to="/viewbooking" className="nav-item nav-link text-white">View Booking</Link>
-                            <Link to="/" className="nav-item nav-link text-white">Pricing</Link>
                         </div> : useData.role === "admin" ? <div className="navbar-nav">
                             <Link to="/" className="nav-item nav-link active text-white" >Areas</Link>
                             <Link to="/addarea" className="nav-item nav-link text-white">Add Area</Link>
-                            <Link to="/" className="nav-item nav-link text-white">FeedBack</Link>
                         </div> : null}
                     </div>
                     <Logout />

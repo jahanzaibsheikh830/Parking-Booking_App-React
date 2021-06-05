@@ -2,25 +2,28 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import url from '../../baseUrl/baseURL'
 import Swal from 'sweetalert2'
+import moment from 'moment'
 function Booking(props) {
-    // const [valData, setValData] = useState({
-    //     startData: [],
-    //     endData: [],
-    // })
+    const [valData, setValData] = useState({
+        startData: [],
+        endData: []
+    })
+    const [startDay, setStartDay] = useState('')
+    const [endDay, setEndDay] = useState('')
+    const [startTime, setStartTime] = useState('')
+    const [endTime, setEndTime] = useState('')
+    const [slot, setSlot] = useState()
+    const [err, setErr] = useState('')
+    const [vSlot, setVSlot] = useState(false)
     const data = props.location.state.slots
     const count = []
     for (let i = 1; i <= data; i++) {
         count.push(i)
     }
+    let startDate = new Date(startDay + " " + startTime).getTime()
+    let endDate = new Date(endDay + " " + endTime).getTime()
     function bookPark(e) {
         e.preventDefault();
-        let startDay = document.getElementById('startDay').value;
-        let endDay = document.getElementById('endDay').value;
-        let startTime = document.getElementById('startTime').value;
-        let endTime = document.getElementById('endTime').value;
-        let slot = document.getElementById('slot').value
-        let startDate = new Date(startDay + " " + startTime).getTime()
-        let endDate = new Date(endDay + " " + endTime).getTime()
 
         if (startDate < Date.now() || endDate < Date.now()) {
             Swal.fire({
@@ -30,88 +33,98 @@ function Booking(props) {
             })
         }
         else {
+            slot === '' || slot === undefined ? setErr('Required') :
+                axios({
+                    method: 'post',
+                    url: url + "/booking",
+                    data: {
+                        location: props.location.state.location,
+                        startDate: Number(startDate),
+                        endDate: Number(endDate),
+                        slot: slot,
+                    },
+                    withCredentials: true
+                }).then((res) => {
+                    if (res.data.status === 200) {
+                        console.log(res.data.message)
+                        Swal.fire(
+                            'Congratulations',
+                            res.data.message,
+                            'success'
+                        )
+                        setVSlot(false)
+                    } else {
+                        console.log(res.data.message)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: res.data.message,
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+        }
+
+    }
+
+
+    function validateSlot() {
+        if (startTime !== '' && endTime !== '' && startDay !== '' && endDay !== '') {
             axios({
-                method: 'post',
-                url: url + "/booking",
+                method: "post",
+                url: url + "/validateSlot",
                 data: {
-                    location: props.location.state.location,
                     startDate: Number(startDate),
                     endDate: Number(endDate),
-                    slot: slot,
+                    location: props.location.state.location,
                 },
                 withCredentials: true
             }).then((res) => {
                 if (res.data.status === 200) {
-                    console.log(res.data.message)
-                    Swal.fire(
-                        'Congratulations',
-                        res.data.message,
-                        'success'
-                    )
-                    document.getElementById('startDay').value = "";
-                    document.getElementById('endDay').value = "";
-                    document.getElementById('startTime').value = "";
-                    document.getElementById('endTime').value = "";
-                } else {
-                    console.log(res.data.message)
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: res.data.message,
+                    setValData(res.data.data)
+                }
+                else {
+                    setValData({
+                        startData: [],
+                        endData: []
                     })
                 }
             }).catch((err) => {
                 console.log(err)
             })
+            setVSlot(true)
         }
-
+        else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "Please fill in all required fields before checking the slots",
+            })
+        }
     }
-    // function validateSlot() {
-    //     let startDay = document.getElementById('startDay').value;
-    //     let endDay = document.getElementById('endDay').value;
-    //     let startTime = document.getElementById('startTime').value;
-    //     let endTime = document.getElementById('endTime').value;
-    //     let startDate = new Date(startDay + " " + startTime).getTime()
-    //     let endDate = new Date(endDay + " " + endTime).getTime()
-    //     axios({
-    //         method: "post",
-    //         url: url + "/validateSlot",
-    //         data: {
-    //             startDate: Number(startDate),
-    //             endDate: Number(endDate),
-    //             location: props.location.state.location,
-    //         },
-    //         withCredentials: true
-    //     }).then((res) => {
-    //         if (res.status === 200) {
-    //             console.log(res.data)
-    //             setValData(res.data)
-    //         }
-    //         else{
-    //             setValData({
-    //                 startData: [],
-    //                 endData: [],
-    //             })
-    //         }
-    //     }).catch((err) => {
-    //         console.log(err)
-    //     })
-    // }
-    // var valSlot = []
-    // console.log(valData)
-    // for (let i = 0; i < valData.startData.length; i++) {
-    //     console.log(i)
-    //     valSlot.push(Number(valData.startData[i].slot))
-    // }
-    // for (let i = 0; i < valData.endData.length; i++) {
-    //     console.log(i)
-    //     valSlot.push(Number(valData.endData[i].slot))
-    // }
-    // console.log(valSlot)
-    // var fin = count.filter((val) => {
-    //     return valSlot.indexOf(val) < 0
-    // })
-    // console.log('res ====', fin)
+
+    var valSlot = []
+    console.log(valData)
+
+    valData.startData.find((val, ind) => {
+        if (moment(startDate).isSameOrAfter(val.startDate) || moment(startDate).isSameOrBefore(val.endData)) {
+            valSlot.push(Number(val.slot))
+            console.log(val)
+        }
+    })
+
+    valData.endData.find((val, ind) => {
+        if (moment(endDate).isSameOrAfter(val.startDate) || moment(endDate).isSameOrBefore(val.endData)) {
+            valSlot.push(Number(val.slot))
+            console.log(val)
+
+        }
+    })
+    var fin = count.filter((val) => {
+        return valSlot.indexOf(val) < 0
+    })
+    console.log("res===", fin)
     return (
         <div className="container">
             <div className="row justify-content-center">
@@ -122,38 +135,47 @@ function Booking(props) {
                         <div className="row">
                             <div className="col">
                                 <label>Start Day</label>
-                                <input type="date" className="form-control" id="startDay" required />
+                                <input type="date" className="form-control"
+                                    value={startDay} required onChange={(e) => setStartDay(e.target.value)} />
                             </div>
                             <div className="col">
                                 <label>End Day</label>
-                                <input type="date" className="form-control" id="endDay" required />
+                                <input type="date" className="form-control"
+                                    value={endDay} required onChange={(e) => setEndDay(e.target.value)} />
                             </div>
                         </div>
                         <div className="row">
                             <div className="col">
                                 <label>Start Time</label>
-                                <input type="time" className="form-control" id="startTime" required />
+                                <input type="time" className="form-control"
+                                    value={startTime} required onChange={(e) => setStartTime(e.target.value)} />
                             </div>
                             <div className="col">
-                                <label>Start Time</label>
-                                <input type="time" className="form-control" id="endTime" required />
+                                <label>End Time</label>
+                                <input type="time" className="form-control"
+                                    required onChange={(e) => setEndTime(e.target.value)} />
                             </div>
                         </div>
                         <div className="row">
                             <div className="col">
-                                <label>Select Slots</label>
-                                <select className="form-control" id="slot" required>
-                                    {
-                                        count.map((val) => {
-                                            return (
-                                                <option value={val}>Slot {val}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
+                                {vSlot ?
+                                    <>
+                                        <label>Select Slots</label>
+                                        <select className="form-control" required onChange={(e) => setSlot(e.target.value)}>
+                                            <option>Select Slots</option>
+                                            {
+                                                fin.map((val, ind) => {
+                                                    return (
+                                                        <option value={val} key={ind}>Slot {val}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select></> : null}
+                                {err ? <p className='text-danger' style={{ fontSize: 12 }}>{err}</p> : null}
                             </div>
                         </div>
                         <button className="btn text-white mt-3" style={{ backgroundColor: "#083144" }} type="submit">Book</button>
+                        <button className="btn text-white mt-3 ml-3" style={{ backgroundColor: "#083144" }} onClick={validateSlot} type="button">Show Slot</button>
                     </form>
                 </div>
             </div>

@@ -41,7 +41,7 @@ function AddArea() {
                         <div className="row">
                             <div className="col">
                                 <label>Description</label>
-                                <textarea class="form-control"placeholder="Description"  required id="desc" rows="3"></textarea>
+                                <textarea className="form-control"placeholder="Description"  required id="desc" rows="3"></textarea>
                             </div>
                         </div>
                         <div className="row">

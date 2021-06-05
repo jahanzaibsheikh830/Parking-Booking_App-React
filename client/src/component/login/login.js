@@ -6,16 +6,12 @@ import { Link } from 'react-router-dom'
 import * as Yup from "yup"
 import axios from 'axios'
 import url from '../../baseUrl/baseURL'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { user } from '../../redux/action/reduxAction'
-import {
-    useHistory
-} from "react-router-dom";
 function Login() {
     const [msg, setMsg] = useState()
     const [msgClass, setMsgClass] = useState()
-    const useData = useSelector((state) => state.addUser)
-    console.log(useData)
+
     const dispatch = useDispatch()
     const validate = Yup.object({
         email: Yup.string()
