@@ -1,6 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 import url from '../../baseUrl/baseURL'
+import Swal from 'sweetalert2'
+
 function AddArea() {
     function addDetails(e){
         e.preventDefault()
@@ -15,7 +17,19 @@ function AddArea() {
             },
             withCredentials: true
         }).then((res)=>{
-            console.log(res)
+            if(res.status === 200){
+                Swal.fire(
+                    'Congratulations',
+                    res.data.message,
+                    'success'
+                )
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: res.data
+                })
+            }
         }).catch((err)=>[
             console.log(err)
 
