@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 require('./dbconn/model')
+const path = require('path')
 var jwt = require('jsonwebtoken');
 const { UserModel, bookingModel, areaModel } = require('./dbconn/model')
 const app = express()
@@ -13,9 +14,10 @@ const authRoutes = require('./authroutes/auth')
 var SERVER_SECRET = process.env.SECRET || "1234";
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","https://parking-app-react.herokuapp.com"],
     credentials: true
 }))
+app.use("/", express.static(path.resolve(path.join(__dirname, "./client/build"))))
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
