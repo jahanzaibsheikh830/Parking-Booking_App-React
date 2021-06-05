@@ -28,7 +28,7 @@ function Dashboard() {
                             return (
                                 <div className='col-md-4' key={i}   >
                                     <div className="card" >
-                                        <img src={value.imgUrl} className="card-img-top" alt="..." />
+                                        <img src={value.imgUrl} className="card-img-top" alt="..." style={{height: 200}} />
                                         <div className="card-body">
                                             <h5 className="card-title text-capitalize" style={{ color: "#083144" }}>{value.location}</h5>
                                             <p className="card-text">{value.desc}</p>
