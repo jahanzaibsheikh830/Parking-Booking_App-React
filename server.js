@@ -11,10 +11,11 @@ const { UserModel, bookingModel, areaModel } = require('./dbconn/model')
 const app = express()
 const PORT = process.env.PORT || 4000
 const authRoutes = require('./authroutes/auth')
+const { captureRejectionSymbol } = require('events')
 var SERVER_SECRET = process.env.SECRET || "1234";
 
 app.use(cors({
-    origin: ["http://localhost:3000","https://parking-app-react.herokuapp.com"],
+    origin: ["http://localhost:3000", "https://parking-app-react.herokuapp.com"],
     credentials: true
 }))
 app.use("/", express.static(path.resolve(path.join(__dirname, "./client/build"))))
@@ -116,8 +117,8 @@ app.post('/booking', async (req, res) => {
         start = start.getTime()
         end = end.getTime()
 
-        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $lte: new Date(end) }, slot, location: req.body.location })
-        const endData = await bookingModel.find({ endDate: { $lte: new Date(end), $gte: new Date(start) }, slot, location: req.body.location })
+        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, slot, location: req.body.location })
+        const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, slot, location: req.body.location })
 
         console.log("Start Data", startData)
         console.log("End Data", endData)
@@ -153,7 +154,7 @@ app.get('/getBookings', async (req, res) => {
             res.send("no user found fot the given ID")
         }
 
-        const bookingData = await bookingModel.find({email: req.body.jToken.email})
+        const bookingData = await bookingModel.find({ email: req.body.jToken.email })
 
         if (bookingData) {
             res.status(200).send({
@@ -253,25 +254,31 @@ app.post('/addAreaDetails', async (req, res) => {
         if (!user) {
             res.send("no user found fot the given ID")
         }
-
-        const newData = new areaModel({
-            location: req.body.location,
-            slots: req.body.slots,
-            desc: req.body.desc,
-            imgUrl: req.body.imgURl
-        })
-
-        const successData = await newData.save()
-
-        if (successData) {
-            res.status(200).send({
-                message: "Successfully Added",
-                data: successData
+        const searchData = await areaModel.findOne({ location: req.body.location })
+        if (!searchData) {
+            const newData = new areaModel({
+                location: req.body.location,
+                slots: req.body.slots,
+                desc: req.body.desc,
+                imgUrl: req.body.imgURl
             })
+
+            const successData = await newData.save()
+
+            if (successData) {
+                res.send({
+                    status: 200,
+                    message: "Successfully Added",
+                    data: successData
+                })
+            }
+            else {
+                res.status(400).send({ message: 'something went wrong' })
+            }
+        } else {
+            res.send({ status: 409, message: "Location already exist" })
         }
-        else {
-            res.status(400).send('something went wrong')
-        }
+
 
     } catch (error) {
         res.status(400).send(error.message)
@@ -297,6 +304,28 @@ app.get('/getLocations', async (req, res) => {
 
     } catch (error) {
         res.status(400).send(error.message)
+    }
+})
+app.post('/deleteLocation', async (req, res) => {
+    try {
+        const user = await UserModel.findOne({ email: req.body.jToken.email })
+        if (!user) {
+            res.send("no user found fot the given ID")
+        }
+        const success = await areaModel.findByIdAndDelete(req.body.id)
+        if (success) {
+            res.status(200).send(
+                {
+                    message: "deleted"
+                }
+            )
+        } else {
+            res.status(400).send("Something went wrong")
+
+        }
+    } catch (error) {
+        res.status(400).send(error.message)
+
     }
 })
 app.get('/logout', (req, res) => {

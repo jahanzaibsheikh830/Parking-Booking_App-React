@@ -118,7 +118,6 @@ function Booking(props) {
         if (moment(endDate).isSameOrAfter(val.startDate) || moment(endDate).isSameOrBefore(val.endData)) {
             valSlot.push(Number(val.slot))
             console.log(val)
-
         }
     })
     var fin = count.filter((val) => {
