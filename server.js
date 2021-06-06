@@ -103,12 +103,10 @@ app.post('/booking', async (req, res) => {
             res.send("no user found fot the given ID")
         }
         const { startDate, endDate, slot } = req.body
-        console.log(slot)
 
         let start = new Date(startDate)
         let end = new Date(endDate)
 
-        console.log(start, end)
         start.setMilliseconds(0)
         start.setSeconds(0)
         end.setMilliseconds(0)
@@ -117,28 +115,21 @@ app.post('/booking', async (req, res) => {
         start = start.getTime()
         end = end.getTime()
 
-        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, slot, location: req.body.location })
-        const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, slot, location: req.body.location })
-
-        console.log("Start Data", startData)
-        console.log("End Data", endData)
-
-        if (startData.length !== 0 || endData.length !== 0) {
-            res.send({ status: 403, message: "Sorry! Slot is not available at this time" })
-        }
-        else {
-            let newBooking = new bookingModel({
-                firstName: user.firstName,
-                lastName: user.lastName,
-                slot: req.body.slot,
-                email: user.email,
-                location: req.body.location,
-                phone: user.phone,
-                startDate: req.body.startDate,
-                endDate: req.body.endDate
-            })
-            const successData = await newBooking.save()
+        let newBooking = new bookingModel({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            slot: req.body.slot,
+            email: user.email,
+            location: req.body.location,
+            phone: user.phone,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate
+        })
+        const successData = await newBooking.save()
+        if (successData) {
             res.send({ status: 200, successData: successData, message: "Slot has booked Successfully" });
+        } else {
+            res.status(400).send("Something went wrong")
         }
 
     } catch (error) {
@@ -213,7 +204,7 @@ app.post('/validateSlot', async (req, res) => {
         // const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, location: req.body.location })
         // const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, location: req.body.location })
 
-        const data = await bookingModel.find({location: req.body.location })
+        const data = await bookingModel.find({ location: req.body.location })
         console.log("startDate ====", data)
         // console.log("endDate ======", endData)
         if (data.length !== 0) {

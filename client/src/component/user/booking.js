@@ -11,18 +11,20 @@ function Booking(props) {
     const [endTime, setEndTime] = useState('')
     const [slot, setSlot] = useState()
     const [err, setErr] = useState('')
+    const [slotBtn, setSlotBtn] = useState(true)
+    const [bookBtn, setBookBtn] = useState(false)
     const [vSlot, setVSlot] = useState(false)
     const data = props.location.state.slots
     const count = []
     for (let i = 1; i <= data; i++) {
         count.push(i)
     }
+    
     let startDate = new Date(startDay + " " + startTime)
     let endDate = new Date(endDay + " " + endTime)
     function bookPark(e) {
         e.preventDefault();
-
-        if (startDate < Date.now() || endDate < Date.now() || startDate > endDate) {
+        if (startDate < Date.now() || endDate < Date.now() || startDate > endDate ) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -50,10 +52,12 @@ function Booking(props) {
                             'success'
                         )
                         setVSlot(false)
-                        startDay('')    
-                        startTime('')    
-                        endDay('')    
-                        endTime('')    
+                        setSlotBtn(true)
+                        setBookBtn(false)
+                        setStartDay('')
+                        setStartTime('')
+                        setEndTime('')
+                        setEndDay('')
                     } else {
                         console.log(res.data.message)
                         Swal.fire({
@@ -68,7 +72,6 @@ function Booking(props) {
         }
 
     }
-
 
     function validateSlot() {
         if (startTime !== '' && endTime !== '' && startDay !== '' && endDay !== '') {
@@ -93,6 +96,8 @@ function Booking(props) {
                 console.log(err)
             })
             setVSlot(true)
+            setSlotBtn(false)
+            setBookBtn(true)
         }
         else {
             Swal.fire({
@@ -108,13 +113,13 @@ function Booking(props) {
     valData.find((val, ind) => {
         if (moment(new Date(startDate).toLocaleString()).isSameOrAfter(new Date(val.startDate).toLocaleString()) &&
             moment(new Date(startDate).toLocaleString()).isSameOrBefore(new Date(val.endDate).toLocaleString())
-            || moment(new Date(val.startDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(),new Date(endDate).toLocaleDateString()) && new Date(startDate).getMinutes() >= new Date(val.startDate).getMinutes() && new Date(startDate).getMinutes()<= new Date( val.endDate).getMinutes()) {
+            || moment(new Date(val.startDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(), new Date(endDate).toLocaleDateString()) && new Date(startDate).getMinutes() >= new Date(val.startDate).getMinutes() && new Date(startDate).getMinutes() <= new Date(val.endDate).getMinutes()) {
             valSlot.push(Number(val.slot))
         }
         if (moment(new Date(endDate).toLocaleString()).isSameOrBefore(new Date(val.endDate).toLocaleString()) &&
             moment(new Date(endDate).toLocaleString()).isSameOrAfter(new Date(val.startDate).toLocaleString())
-            || moment(new Date(val.endDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(),new Date(endDate).toLocaleDateString())
-           && new Date(endDate).getMinutes() >= new Date(val.endDate).getMinutes() && new Date(endDate).getMinutes()<= new Date( val.startDate).getMinutes()) {
+            || moment(new Date(val.endDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(), new Date(endDate).toLocaleDateString())
+            && new Date(endDate).getMinutes() >= new Date(val.endDate).getMinutes() && new Date(endDate).getMinutes() <= new Date(val.startDate).getMinutes()) {
             valSlot.push(Number(val.slot))
         }
     })
@@ -148,7 +153,7 @@ function Booking(props) {
                             </div>
                             <div className="col">
                                 <label>End Time</label>
-                                <input type="time" className="form-control"
+                                <input type="time" className="form-control" 
                                     required onChange={(e) => setEndTime(e.target.value)} />
                             </div>
                         </div>
@@ -170,8 +175,11 @@ function Booking(props) {
                                 {err ? <p className='text-danger' style={{ fontSize: 12 }}>{err}</p> : null}
                             </div>
                         </div>
-                        <button className="btn text-white mt-3" style={{ backgroundColor: "#083144" }} type="submit">Book</button>
-                        <button className="btn text-white mt-3 ml-3" style={{ backgroundColor: "#083144" }} onClick={validateSlot} type="button">Show Slot</button>
+                        {bookBtn ? <button className="btn text-white mt-3 w-100" style={{ backgroundColor: "#083144" }}
+                            type="submit">Book</button> : null}
+                        {slotBtn?<button className="btn text-white mt-3 w-100"
+                            style={{ backgroundColor: "#083144" }} onClick={validateSlot}
+                            type="button" >Show Slot</button>: null}
                     </form>
                 </div>
             </div>
