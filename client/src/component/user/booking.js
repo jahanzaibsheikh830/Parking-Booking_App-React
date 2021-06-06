@@ -4,10 +4,7 @@ import url from '../../baseUrl/baseURL'
 import Swal from 'sweetalert2'
 import moment from 'moment'
 function Booking(props) {
-    const [valData, setValData] = useState({
-        startData: [],
-        endData: []
-    })
+    const [valData, setValData] = useState([])
     const [startDay, setStartDay] = useState('')
     const [endDay, setEndDay] = useState('')
     const [startTime, setStartTime] = useState('')
@@ -20,12 +17,12 @@ function Booking(props) {
     for (let i = 1; i <= data; i++) {
         count.push(i)
     }
-    let startDate = new Date(startDay + " " + startTime).getTime()
-    let endDate = new Date(endDay + " " + endTime).getTime()
+    let startDate = new Date(startDay + " " + startTime)
+    let endDate = new Date(endDay + " " + endTime)
     function bookPark(e) {
         e.preventDefault();
 
-        if (startDate < Date.now() || endDate < Date.now()) {
+        if (startDate < Date.now() || endDate < Date.now() || startDate > endDate) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -53,6 +50,10 @@ function Booking(props) {
                             'success'
                         )
                         setVSlot(false)
+                        startDay('')    
+                        startTime('')    
+                        endDay('')    
+                        endTime('')    
                     } else {
                         console.log(res.data.message)
                         Swal.fire({
@@ -83,19 +84,17 @@ function Booking(props) {
             }).then((res) => {
                 if (res.data.status === 200) {
                     setValData(res.data.data)
+                    console.log(res.data.data)
                 }
                 else {
-                    setValData({
-                        startData: [],
-                        endData: []
-                    })
+                    setValData([])
                 }
             }).catch((err) => {
                 console.log(err)
             })
             setVSlot(true)
         }
-        else{
+        else {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -105,25 +104,23 @@ function Booking(props) {
     }
 
     var valSlot = []
-    console.log(valData)
 
-    valData.startData.find((val, ind) => {
-        if (moment(startDate).isSameOrAfter(val.startDate) || moment(startDate).isSameOrBefore(val.endData)) {
+    valData.find((val, ind) => {
+        if (moment(new Date(startDate).toLocaleString()).isSameOrAfter(new Date(val.startDate).toLocaleString()) &&
+            moment(new Date(startDate).toLocaleString()).isSameOrBefore(new Date(val.endDate).toLocaleString())
+            || moment(new Date(val.startDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(),new Date(endDate).toLocaleDateString()) && new Date(startDate).getMinutes() >= new Date(val.startDate).getMinutes() && new Date(startDate).getMinutes()<= new Date( val.endDate).getMinutes()) {
             valSlot.push(Number(val.slot))
-            console.log(val)
         }
-    })
-
-    valData.endData.find((val, ind) => {
-        if (moment(endDate).isSameOrAfter(val.startDate) || moment(endDate).isSameOrBefore(val.endData)) {
+        if (moment(new Date(endDate).toLocaleString()).isSameOrBefore(new Date(val.endDate).toLocaleString()) &&
+            moment(new Date(endDate).toLocaleString()).isSameOrAfter(new Date(val.startDate).toLocaleString())
+            || moment(new Date(val.endDate).toLocaleDateString()).isBetween(new Date(startDate).toLocaleDateString(),new Date(endDate).toLocaleDateString())
+           && new Date(endDate).getMinutes() >= new Date(val.endDate).getMinutes() && new Date(endDate).getMinutes()<= new Date( val.startDate).getMinutes()) {
             valSlot.push(Number(val.slot))
-            console.log(val)
         }
     })
     var fin = count.filter((val) => {
         return valSlot.indexOf(val) < 0
     })
-    console.log("res===", fin)
     return (
         <div className="container">
             <div className="row justify-content-center">

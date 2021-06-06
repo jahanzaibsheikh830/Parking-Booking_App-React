@@ -210,18 +210,16 @@ app.post('/validateSlot', async (req, res) => {
         console.log("startDate", start)
         console.log("endDate", end)
 
-        const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, location: req.body.location })
-        const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, location: req.body.location })
+        // const startData = await bookingModel.find({ startDate: { $gte: new Date(start), $gte: new Date(end) }, location: req.body.location })
+        // const endData = await bookingModel.find({ endDate: { $gte: new Date(end), $gte: new Date(start) }, location: req.body.location })
 
-        console.log("startDate ====", startData)
-        console.log("endDate ======", endData)
-        if (startData.length !== 0 || endData.length !== 0) {
+        const data = await bookingModel.find({location: req.body.location })
+        console.log("startDate ====", data)
+        // console.log("endDate ======", endData)
+        if (data.length !== 0) {
             res.send({
                 status: 200,
-                data: {
-                    startData,
-                    endData
-                }
+                data: data
             })
         } else {
             res.send("not found")

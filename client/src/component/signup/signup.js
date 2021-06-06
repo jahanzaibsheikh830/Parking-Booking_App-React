@@ -32,64 +32,66 @@ function Signup() {
       backgroundSize: "cover", backgroundPosition: "center"
     }}>
       <div className='container '>
-        <div className='row justify-content-center'>
-          <div className="col-md-5 bg-white px-5 pb-3" style={{ marginTop: '40px' }}>
-            <Formik
-              initialValues={{
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                password: '',
-              }}
-              validationSchema={validate}
-              onSubmit={(values) => {
-                const userData = {
-                  firstName: values.firstName,
-                  lastName: values.lastName,
-                  email: values.email.toLowerCase(),
-                  phone: values.phone,
-                  password: values.password
-                }
-                axios({
-                  method: 'post',
-                  url: url + "/signup",
-                  data: userData,
-                  withCredentials: true
-                }).then((res) => {
-                  if (res.data.status === 200) {
-                    setMsgClass('alert-success')
-                    setMsg(res.data.message)
-                    values.firstName = ""
-                    values.lastName = ""
-                    values.email = ""
-                    values.phone = ""
-                    values.password = ""
-                  } else {
-                    setMsgClass('alert-danger')    
-                    setMsg(res.data.message)
+        <div className='row'>
+          <div className='d-flex justify-content-center align-items-center' style={{ width: "100%", height: "100vh" }}>
+            <div className="col-md-5 bg-white px-5 pb-3" style={{ marginTop: '40px' }}>
+              <Formik
+                initialValues={{
+                  firstName: '',
+                  lastName: '',
+                  email: '',
+                  phone: '',
+                  password: '',
+                }}
+                validationSchema={validate}
+                onSubmit={(values) => {
+                  const userData = {
+                    firstName: values.firstName,
+                    lastName: values.lastName,
+                    email: values.email.toLowerCase(),
+                    phone: values.phone,
+                    password: values.password
                   }
-                }).catch((err) => {
-                  console.log(err)
-                })
-              }}
-            >
-              {formik => (
-                <div>
-                  <h1 className="my-4 font-weight-bold .display-4" style={{color: "#083144"}}>Sign Up</h1>
-                  <Form>
-                    <TextField label="First Name" name="firstName" type="text" />
-                    <TextField label="Last Name" name="lastName" type="text" />
-                    <TextField label="Email" name="email" type="email" />
-                    <TextField label="Phone" name="phone" type="text" />
-                    <TextField label="Password" name="password" type="password" />
-                    <button className="btn text-white" style={{backgroundColor: "#083144"}} type="submit">Register</button>
-                  </Form>
-                  <p className="mt-2">Already have an account? <Link to="/login">Login</Link> </p>
-                  {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}
-                </div>
-              )}
-            </Formik>
+                  axios({
+                    method: 'post',
+                    url: url + "/signup",
+                    data: userData,
+                    withCredentials: true
+                  }).then((res) => {
+                    if (res.data.status === 200) {
+                      setMsgClass('alert-success')
+                      setMsg(res.data.message)
+                      values.firstName = ""
+                      values.lastName = ""
+                      values.email = ""
+                      values.phone = ""
+                      values.password = ""
+                    } else {
+                      setMsgClass('alert-danger')
+                      setMsg(res.data.message)
+                    }
+                  }).catch((err) => {
+                    console.log(err)
+                  })
+                }}
+              >
+                {formik => (
+                  <div>
+                    <h1 className="my-4 font-weight-bold .display-4" style={{ color: "#083144" }}>Sign Up</h1>
+                    <Form>
+                      <TextField label="First Name" name="firstName" type="text" />
+                      <TextField label="Last Name" name="lastName" type="text" />
+                      <TextField label="Email" name="email" type="email" />
+                      <TextField label="Phone" name="phone" type="text" />
+                      <TextField label="Password" name="password" type="password" />
+                      <button className="btn text-white" style={{ backgroundColor: "#083144" }} type="submit">Register</button>
+                    </Form>
+                    <p className="mt-2">Already have an account? <Link to="/login">Login</Link> </p>
+                    {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}
+                  </div>
+                )}
+              </Formik>
+            </div>
           </div>
         </div>
       </div>
