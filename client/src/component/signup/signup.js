@@ -10,6 +10,8 @@ function Signup() {
   const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
   const [msg, setMsg] = useState()
   const [msgClass, setMsgClass] = useState()
+  const [log, setLog] = useState(false)
+
   const validate = Yup.object({
     firstName: Yup.string()
       .max(15, 'Must be 15 characters or less')
@@ -44,7 +46,7 @@ function Signup() {
                   password: '',
                 }}
                 validationSchema={validate}
-                onSubmit={(values) => {
+                onSubmit={(values, onSubmitProps) => {
                   const userData = {
                     firstName: values.firstName,
                     lastName: values.lastName,
@@ -52,6 +54,7 @@ function Signup() {
                     phone: values.phone,
                     password: values.password
                   }
+                  setLog(true)
                   axios({
                     method: 'post',
                     url: url + "/signup",
@@ -61,14 +64,14 @@ function Signup() {
                     if (res.data.status === 200) {
                       setMsgClass('alert-success')
                       setMsg(res.data.message)
-                      values.firstName = ""
-                      values.lastName = ""
-                      values.email = ""
-                      values.phone = ""
-                      values.password = ""
+                      onSubmitProps.resetForm()
+                      setLog(false)
                     } else {
                       setMsgClass('alert-danger')
                       setMsg(res.data.message)
+                      setTimeout(() => {
+                        setMsg('')
+                      }, 3000)
                     }
                   }).catch((err) => {
                     console.log(err)
@@ -84,7 +87,13 @@ function Signup() {
                       <TextField label="Email" name="email" type="email" />
                       <TextField label="Phone" name="phone" type="text" />
                       <TextField label="Password" name="password" type="password" />
-                      <button className="btn text-white" style={{ backgroundColor: "#083144" }} type="submit">Register</button>
+                      <button className="btn text-white w-100" style={{ backgroundColor: "#083144" }} type="submit">
+                        {log ? <div className='text-center mt-2'>
+                          <div className="spinner-border" style={{ width: 20, height: 20 }} role="status">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        </div> : <span>Register</span>}
+                      </button>
                     </Form>
                     <p className="mt-2">Already have an account? <Link to="/login">Login</Link> </p>
                     {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}

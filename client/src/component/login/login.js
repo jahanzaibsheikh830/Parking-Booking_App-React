@@ -63,6 +63,9 @@ function Login() {
                                             setMsgClass('alert-danger')
                                             setLog(false)
                                             setMsg(res.data.message)
+                                            setTimeout(()=>{
+                                                setMsg('')                          
+                                            },3000)
                                         }
                                     }).catch((err) => {
                                         console.log(err)
@@ -74,17 +77,16 @@ function Login() {
                                         <h1 className="my-4 font-weight-bold .display-4" style={{ color: "#083144" }}>Login</h1>
                                         <Form>
                                             <TextField label="Email" name="email" type="email" />
-                                            <TextField label="Password" name="password" type="password" />
-                                            <button className="btn text-white" style={{ width: "100%", backgroundColor: "#083144" }}
-                                                type="submit">
-                                                Login
-                                        </button>
+                                            <TextField label="Password" name="password" type="password"/>
+                                            <button className="btn text-white" style={{ width: "100%", backgroundColor: "#083144" }} type="submit">
+                                                {log? <div className='text-center mt-2'>
+                                                    <div className="spinner-border" style={{width: 20, height:20}} role="status">
+                                                        <span className="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>: <span>Login</span>}
+                                                        
+                                            </button>
                                         </Form>
-                                        {log ? <div className='text-center mt-2'>
-                                            <div className="spinner-border " role="status">
-                                                <span className="sr-only">Loading...</span>
-                                            </div>
-                                        </div> : null}
                                         <p className="mt-2">Already have an account? <Link to="/">Signup</Link> </p>
                                         {msg ? <div className={`alert ${msgClass}`} role="alert">{msg}</div> : null}
                                     </div>
