@@ -13,7 +13,7 @@ function Logout() {
             method: 'get',
             url: URL+'/logout',
             withCredentials: true
-        }).then((response) => {
+        }).then(() => {
             dispatch(user({
                 loginStatus: false,
                 role: null

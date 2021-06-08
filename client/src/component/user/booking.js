@@ -50,7 +50,6 @@ function Booking(props) {
           setEndDay("");
           setLog(false);
         } else {
-          console.log(res.data.message);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -74,20 +73,13 @@ function Booking(props) {
         title: "Oops...",
         text: "End Date should be equal or greater than start date",
       });
-    } else if (endTime <= startTime) {
+    } else if (endTime < startTime) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "End time should be greater than start time",
       });
     }
-    else if (endTime >= startTime) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Start time should be less than end time",
-        });
-      }
     else if (t1.diff(t, "minutes") <= 14) {
       Swal.fire({
         icon: "error",
@@ -109,7 +101,6 @@ function Booking(props) {
       })
         .then((res) => {
           if (res.data.status === 200) {
-            console.log(res.data.data);
             setLog(false);
             setValData(res.data.data);
             setVSlot(true);
@@ -152,11 +143,10 @@ function Booking(props) {
         ))
     ) {
       valSlot.push(Number(val.slot));
-      console.log("strat ", val);
     }
   });
-  var fin = count.filter((val) => {
-    return valSlot.indexOf(val) < 0;
+    var findSlots = count.filter((val) => {
+        return valSlot.indexOf(val) < 0;
   });
   function handleSubmit(e) {
     console.log(e.target.name);
@@ -173,9 +163,6 @@ function Booking(props) {
     setSlotBtn(true);
     setBookBtn(false);
   }
-  console.log(moment().format("YYYY-MM-DD") === startDay);
-  console.log(new Date().toLocaleDateString());
-  console.log(startDay);
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -255,7 +242,7 @@ function Booking(props) {
                       onChange={(e) => setSlot(e.target.value)}
                     >
                       <option>Select Slots</option>
-                      {fin.map((val, ind) => {
+                      {findSlots.map((val, ind) => {
                         return (
                           <option value={val} key={ind}>
                             Slot {val}

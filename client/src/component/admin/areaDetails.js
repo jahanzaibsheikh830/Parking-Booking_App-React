@@ -4,7 +4,6 @@ function AreaDetails({ aData }) {
     const [data, setData] = useState('')
     useEffect(() => {
         setData(aData.location)
-        console.log("dafaf")
     }, [])
     return (
         <div>
