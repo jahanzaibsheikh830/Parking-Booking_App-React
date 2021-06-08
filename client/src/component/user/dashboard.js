@@ -34,8 +34,8 @@ function Dashboard() {
                                             <p className="card-text">{value.desc}</p>
                                             <Link to={{
                                                 pathname: "/booking",
-                                                state: value
-                                            }} className="btn text-white" style={{backgroundColor: "#083144"}}>Booking</Link>
+                                                // state: value
+                                            }} className="btn text-white" style={{backgroundColor: "#083144"}} onClick={()=>localStorage.setItem('data',JSON.stringify(value))}>Booking</Link>
                                         </div>
                                     </div>
                                 </div>

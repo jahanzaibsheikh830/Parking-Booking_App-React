@@ -4,27 +4,26 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-require('./dbconn/model')
 const path = require('path')
 var jwt = require('jsonwebtoken');
 const { UserModel, bookingModel, areaModel } = require('./dbconn/model')
 const app = express()
 const PORT = process.env.PORT || 4000
 const authRoutes = require('./authroutes/auth')
-const { captureRejectionSymbol } = require('events')
 var SERVER_SECRET = process.env.SECRET || "1234";
-
-app.use(cors({
-    origin: ["http://localhost:3000", "https://parking-app-react.herokuapp.com"],
-    credentials: true
-}))
-app.use("/", express.static(path.resolve(path.join(__dirname, "./client/build"))))
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin: ['http://localhost:3000',"https://parking-app-react.herokuapp.com/"],
+    credentials: true
+}));
 app.use(morgan('dev'));
-app.use(authRoutes)
+app.use("/", express.static(path.resolve(path.join(__dirname, "./client/build"))));
+
+app.use('/', authRoutes);
+
 app.use(function (req, res, next) {
-    console.log(req.cookies.jToken)
     if (!req.cookies.jToken) {
         res.status(401).send("include http-only credentials with every request")
         return;
