@@ -1,12 +1,12 @@
 import firebaseApp from 'firebase/app'
 import 'firebase/storage'
 var firebaseConfig = {
-    apiKey: "AIzaSyDCXEsUcb59iNCf3JBeVaKUrraAsa8A07w",
-    authDomain: "bloodapp-31bd2.firebaseapp.com",
-    projectId: "bloodapp-31bd2",
-    storageBucket: "bloodapp-31bd2.appspot.com",
-    messagingSenderId: "61197933681",
-    appId: "1:61197933681:web:c8f2db31707bb4e770cfd0"
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    projectId: process.env.projectId,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId,
+    appId: process.env.appId
 };
 // Initialize Firebase
 firebaseApp.initializeApp(firebaseConfig)
